@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const board = document.getElementById('board');
     const guessInput = document.getElementById('guess-input');
     const submitButton = document.getElementById('submit-guess');
+    const keyboard = document.getElementById('keyboard');
     const errorMessage = document.getElementById('error-message');
 
     let guessCount = 0;
@@ -40,6 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
         targetWord = gameSettings.fetchRandomWord();
         console.log('The target word is:', targetWord);
         createBoard();
+        createKeyboard();
         displayAverageGuesses();
     }
 
@@ -55,6 +57,29 @@ document.addEventListener('DOMContentLoaded', function() {
         for (let i = 0; i < 6; i++) {
             createRow(i);
         }
+    }
+
+    function createKeyboard() {
+        const keys = 'QWERTYUIOPASDFGHJKLZXCVBNM'.split('');
+        keys.forEach(key => {
+            let keyButton = document.createElement('button');
+            keyButton.className = 'key';
+            keyButton.textContent = key;
+            keyButton.addEventListener('click', () => handleKeyPress(key));
+            keyboard.appendChild(keyButton);
+        });
+
+        let enterButton = document.createElement('button');
+        enterButton.className = 'key';
+        enterButton.textContent = 'ENTER';
+        enterButton.addEventListener('click', () => handleKeyPress('ENTER'));
+        keyboard.appendChild(enterButton);
+
+        let deleteButton = document.createElement('button');
+        deleteButton.className = 'key';
+        deleteButton.textContent = 'DELETE';
+        deleteButton.addEventListener('click', () => handleKeyPress('DELETE'));
+        keyboard.appendChild(deleteButton);
     }
 
     function displayAverageGuesses() {
@@ -97,10 +122,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (letter === targetWord[index]) {
                 cell.classList.add('correct');
+                updateKeyColor(letter, 'correct');
             } else if (targetWord.includes(letter)) {
                 cell.classList.add('wrong-place');
+                updateKeyColor(letter, 'wrong-place');
             } else {
                 cell.classList.add('not-in-word');
+                updateKeyColor(letter, 'not-in-word');
             }
         });
 
@@ -119,6 +147,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
         guessInput.value = '';
         guessInput.focus();
+    }
+
+    function updateKeyColor(key, className) {
+        const keyButton = Array.from(keyboard.children).find(button => button.textContent === key);
+        if (keyButton) {
+            keyButton.classList.add(className);
+        }
+    }
+
+    function handleKeyPress(key) {
+        if (key === 'ENTER') {
+            checkGuess(guessInput.value.toUpperCase());
+        } else if (key === 'DELETE') {
+            guessInput.value = guessInput.value.slice(0, -1);
+        } else {
+            guessInput.value += key;
+        }
     }
 
     function showErrorMessage(message, show = true) {
