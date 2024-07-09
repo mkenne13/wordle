@@ -3,50 +3,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const guessInput = document.getElementById('guess-input');
     const submitButton = document.getElementById('submit-guess');
     const errorMessage = document.getElementById('error-message');
-    const keyboard = document.querySelector('.keyboard');
 
-    let currentRow = 0;
     let guessCount = 0;
-
-    function createKeyboard() {
-        const row1Keys = 'QWERTYUIOP'.split('');
-        const row2Keys = 'ASDFGHJKL'.split('');
-        const row3Keys = 'ZXCVBNM'.split('');
-
-        const row1 = document.getElementById('row1');
-        const row2 = document.getElementById('row2');
-        const row3 = document.getElementById('row3');
-
-        if (!row1 || !row2 || !row3) {
-            console.error('One or more rows not found.');
-            return;
-        }
-
-        row1Keys.forEach(key => {
-            const keyElement = createKeyElement(key);
-            row1.appendChild(keyElement);
-        });
-
-        row2Keys.forEach(key => {
-            const keyElement = createKeyElement(key);
-            row2.appendChild(keyElement);
-        });
-
-        row3Keys.forEach(key => {
-            const keyElement = createKeyElement(key);
-            row3.appendChild(keyElement);
-        });
-    }
-
-    function createKeyElement(key) {
-        const keyElement = document.createElement('div');
-        keyElement.classList.add('key');
-        keyElement.textContent = key;
-        keyElement.addEventListener('click', () => {
-            guessInput.value += key; // Append clicked key to the guess input
-        });
-        return keyElement;
-    }
+    let targetWord = '';
 
     const gameSettings = {
         wordList: [
@@ -77,28 +36,24 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    let targetWord = '';
-
     function initializeGame() {
         targetWord = gameSettings.fetchRandomWord();
         console.log('The target word is:', targetWord);
-        createBoard(); // Call function to create the board
-        createKeyboard(); // Call function to create the keyboard
-        displayAverageGuesses(); // Display average guesses on page load
+        createBoard();
+        displayAverageGuesses();
     }
 
-    function createRow() {
+    function createRow(rowIndex) {
         for (let i = 0; i < 5; i++) {
             let cell = document.createElement('div');
-            cell.className = `cell position-${i} row-${currentRow}`;
+            cell.className = `cell position-${i} row-${rowIndex}`;
             board.appendChild(cell);
         }
-        currentRow++;
     }
 
     function createBoard() {
         for (let i = 0; i < 6; i++) {
-            createRow();
+            createRow(i);
         }
     }
 
