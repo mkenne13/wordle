@@ -2,18 +2,21 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     margin: 0;
     font-family: Arial, sans-serif;
     background-color: #f0f0f0;
+    box-sizing: border-box;
 }
 
 #container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    max-width: 100%;
     padding: 10px;
+    width: 100%;
+    max-width: 600px;
+    box-sizing: border-box;
 }
 
 .game-title {
@@ -26,14 +29,13 @@ body {
 
 .board {
     display: grid;
-    grid-template-columns: repeat(5, 60px);
-    grid-template-rows: repeat(6, 60px);
+    grid-template-columns: repeat(5, 1fr);
     gap: 5px;
     margin-bottom: 20px;
     border: 2px solid #333;
     background-color: #fff;
-    max-width: 100%;
-    overflow: hidden;
+    width: 100%;
+    max-width: 300px;
 }
 
 .cell {
@@ -44,19 +46,23 @@ body {
     font-weight: bold;
     color: #333;
     background-color: #ddd;
+    height: 60px;
 }
 
 .guess-container {
     text-align: center;
     margin-top: 10px;
+    width: 100%;
 }
 
 #guess-input {
-    width: 200px;
+    width: 100%;
+    max-width: 200px;
     height: 30px;
     font-size: 18px;
     text-transform: uppercase;
     text-align: center;
+    box-sizing: border-box;
 }
 
 #error-message {
@@ -64,53 +70,92 @@ body {
     font-size: 14px;
     font-style: italic;
     visibility: hidden;
+    text-align: center;
 }
 
 button {
-    margin-left: 10px;
+    margin-top: 10px;
     padding: 5px 10px;
     font-size: 16px;
 }
 
 .keyboard {
+    display: grid;
+    gap: 10px;
+    margin-top: 20px;
+    width: 100%;
+}
+
+.row {
     display: flex;
-    flex-wrap: wrap;
     justify-content: center;
-    max-width: 100%;
-    margin-top: 10px;
 }
 
 .key {
-    width: 40px;
-    height: 40px;
-    margin: 5px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 18px;
-    font-weight: bold;
-    color: #fff;
-    background-color: #333;
-    border: none;
+    background-color: #fff;
+    border: 1px solid #ccc;
     border-radius: 4px;
+    padding: 10px 15px;
+    margin: 5px;
+    font-size: 18px;
     cursor: pointer;
+    transition: background-color 0.2s;
 }
 
-.key.correct {
-    background-color: green;
+.key:hover {
+    background-color: #e0e0e0;
 }
 
-.key.wrong-place {
-    background-color: yellow;
-    color: #333;
+.key:active {
+    background-color: #ccc;
 }
 
-.key.not-in-word {
-    background-color: #888;
+.correct {
+    background-color: #4CAF50;
+    color: #fff;
+}
+
+.wrong-place {
+    background-color: #FFC107;
+}
+
+.not-in-word {
+    background-color: gray;
+    color: #fff;
 }
 
 .average-guesses {
     margin-top: 10px;
     font-size: 18px;
     font-weight: bold;
+    text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .game-title {
+        font-size: 20px;
+    }
+
+    .cell {
+        font-size: 20px;
+        height: 50px;
+    }
+
+    #guess-input {
+        font-size: 16px;
+    }
+
+    button {
+        font-size: 14px;
+    }
+
+    .key {
+        font-size: 16px;
+        padding: 8px 12px;
+    }
+
+    .average-guesses {
+        font-size: 16px;
+    }
 }
