@@ -2,11 +2,51 @@ document.addEventListener('DOMContentLoaded', function() {
     const board = document.getElementById('board');
     const guessInput = document.getElementById('guess-input');
     const submitButton = document.getElementById('submit-guess');
-    const keyboard = document.getElementById('keyboard');
     const errorMessage = document.getElementById('error-message');
+    const keyboard = document.querySelector('.keyboard');
 
+    let currentRow = 0;
     let guessCount = 0;
-    let targetWord = '';
+
+    function createKeyboard() {
+        const row1Keys = 'QWERTYUIOP'.split('');
+        const row2Keys = 'ASDFGHJKL'.split('');
+        const row3Keys = 'ZXCVBNM'.split('');
+
+        const row1 = document.getElementById('row1');
+        const row2 = document.getElementById('row2');
+        const row3 = document.getElementById('row3');
+
+        if (!row1 || !row2 || !row3) {
+            console.error('One or more rows not found.');
+            return;
+        }
+
+        row1Keys.forEach(key => {
+            const keyElement = createKeyElement(key);
+            row1.appendChild(keyElement);
+        });
+
+        row2Keys.forEach(key => {
+            const keyElement = createKeyElement(key);
+            row2.appendChild(keyElement);
+        });
+
+        row3Keys.forEach(key => {
+            const keyElement = createKeyElement(key);
+            row3.appendChild(keyElement);
+        });
+    }
+
+    function createKeyElement(key) {
+        const keyElement = document.createElement('div');
+        keyElement.classList.add('key');
+        keyElement.textContent = key;
+        keyElement.addEventListener('click', () => {
+            guessInput.value += key; // Append clicked key to the guess input
+        });
+        return keyElement;
+    }
 
     const gameSettings = {
         wordList: [
@@ -37,49 +77,29 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
+    let targetWord = '';
+
     function initializeGame() {
         targetWord = gameSettings.fetchRandomWord();
         console.log('The target word is:', targetWord);
-        createBoard();
-        createKeyboard();
-        displayAverageGuesses();
+        createBoard(); // Call function to create the board
+        createKeyboard(); // Call function to create the keyboard
+        displayAverageGuesses(); // Display average guesses on page load
     }
 
-    function createRow(rowIndex) {
+    function createRow() {
         for (let i = 0; i < 5; i++) {
             let cell = document.createElement('div');
-            cell.className = `cell position-${i} row-${rowIndex}`;
+            cell.className = `cell position-${i} row-${currentRow}`;
             board.appendChild(cell);
         }
+        currentRow++;
     }
 
     function createBoard() {
         for (let i = 0; i < 6; i++) {
-            createRow(i);
+            createRow();
         }
-    }
-
-    function createKeyboard() {
-        const keys = 'QWERTYUIOPASDFGHJKLZXCVBNM'.split('');
-        keys.forEach(key => {
-            let keyButton = document.createElement('button');
-            keyButton.className = 'key';
-            keyButton.textContent = key;
-            keyButton.addEventListener('click', () => handleKeyPress(key));
-            keyboard.appendChild(keyButton);
-        });
-
-        let enterButton = document.createElement('button');
-        enterButton.className = 'key';
-        enterButton.textContent = 'ENTER';
-        enterButton.addEventListener('click', () => handleKeyPress('ENTER'));
-        keyboard.appendChild(enterButton);
-
-        let deleteButton = document.createElement('button');
-        deleteButton.className = 'key';
-        deleteButton.textContent = 'DELETE';
-        deleteButton.addEventListener('click', () => handleKeyPress('DELETE'));
-        keyboard.appendChild(deleteButton);
     }
 
     function displayAverageGuesses() {
@@ -122,13 +142,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (letter === targetWord[index]) {
                 cell.classList.add('correct');
-                updateKeyColor(letter, 'correct');
             } else if (targetWord.includes(letter)) {
                 cell.classList.add('wrong-place');
-                updateKeyColor(letter, 'wrong-place');
             } else {
                 cell.classList.add('not-in-word');
-                updateKeyColor(letter, 'not-in-word');
             }
         });
 
@@ -147,23 +164,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         guessInput.value = '';
         guessInput.focus();
-    }
-
-    function updateKeyColor(key, className) {
-        const keyButton = Array.from(keyboard.children).find(button => button.textContent === key);
-        if (keyButton) {
-            keyButton.classList.add(className);
-        }
-    }
-
-    function handleKeyPress(key) {
-        if (key === 'ENTER') {
-            checkGuess(guessInput.value.toUpperCase());
-        } else if (key === 'DELETE') {
-            guessInput.value = guessInput.value.slice(0, -1);
-        } else {
-            guessInput.value += key;
-        }
     }
 
     function showErrorMessage(message, show = true) {
